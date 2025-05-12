@@ -7,8 +7,13 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
-  origin: '*', // accepte toutes les origines (y compris chrome-extension://)
+  origin: (origin, callback) => {
+    callback(null, true); // autorise toutes les origines dynamiquement
+  },
+  methods: ["GET", "POST", "DELETE"],
+  allowedHeaders: ["Content-Type"]
 }));
+
 
 app.use(express.json({ limit: "50mb" }));
 
