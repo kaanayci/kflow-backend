@@ -36,22 +36,15 @@ const Entry = mongoose.model("Entry", entrySchema);
 
 // 🔄 Routes API
 app.get("/entries", async (req, res) => {
-  const { userId } = req.query;
-  if (!userId) return res.status(400).json({ error: "Missing userId" });
-
-  const entries = await Entry.find({ userId }).sort({ date: 1 });
+  const entries = await Entry.find().sort({ date: 1 });
   res.json(entries);
 });
 
-
 app.post("/entries", async (req, res) => {
-  if (!req.body.userId) return res.status(400).json({ error: "Missing userId" });
-
   const entry = new Entry(req.body);
   await entry.save();
   res.status(201).json({ success: true });
 });
-
 
 app.delete("/entries/:id", async (req, res) => {
   await Entry.deleteOne({ id: req.params.id });
