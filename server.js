@@ -30,7 +30,9 @@ const entrySchema = new mongoose.Schema({
   url: String,
   size: Number,
   date: String,
+  userId: String // ← ajoute cette ligne !
 });
+
 
 const Entry = mongoose.model("Entry", entrySchema);
 
