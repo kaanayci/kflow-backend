@@ -1,3 +1,4 @@
+// ✅ server.js compatible extensions navigateur (Chrome, Edge, Firefox)
 const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
@@ -5,11 +6,17 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ CORS manuel avant tout
+// ✅ Middleware CORS dynamique 100% compatible extensions
 app.use((req, res, next) => {
   const origin = req.headers.origin;
 
-  if (origin && (origin.startsWith("chrome-extension://") || origin.startsWith("moz-extension://") || origin.startsWith("edge-extension://"))) {
+  // Autorise uniquement les extensions navigateur (Chrome, Edge, Firefox)
+  if (
+    origin &&
+    (origin.startsWith("chrome-extension://") ||
+     origin.startsWith("moz-extension://") ||
+     origin.startsWith("edge-extension://"))
+  ) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
 
@@ -23,15 +30,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ JSON parser (doit venir après CORS !)
+// ✅ JSON body parser après CORS
 app.use(express.json({ limit: "50mb" }));
 
-// ✅ MongoDB
+// ✅ Connexion à MongoDB Atlas
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Connected to MongoDB Atlas"))
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
-// ✅ Mongoose schema
+// ✅ Schéma avec support fichiers (Mixed) et userId
 const entrySchema = new mongoose.Schema({
   id: String,
   type: String,
