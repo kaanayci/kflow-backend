@@ -6,7 +6,10 @@ require("dotenv").config(); // ← Charge .env
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: '*', // accepte toutes les origines (y compris chrome-extension://)
+}));
+
 app.use(express.json({ limit: "50mb" }));
 
 // 🔌 Connexion à MongoDB Atlas
