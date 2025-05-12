@@ -1,40 +1,49 @@
 const express = require("express");
-const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 3000;
+const cors = require("cors");
+
+app.use(cors());
+app.use(express.json({ limit: "50mb" }));
+
+
 
 const entries = [];
 
-app.use(cors());
-app.use(express.json());
-
+// GET : retourne uniquement les entrées de l'utilisateur
 app.get("/entries", (req, res) => {
-  res.json(entries);
+  const userId = req.query.userId;
+  if (!userId) {
+    return res.status(400).json({ error: "Missing userId in query" });
+  }
+
+  const filtered = entries.filter(e => e.userId === userId);
+  res.json(filtered);
 });
 
+// POST : ajoute une nouvelle entrée avec userId obligatoire
 app.post("/entries", (req, res) => {
-  const entry = req.body;
-  if (!entry || !entry.id) {
-    return res.status(400).json({ error: "Invalid entry" });
+  const { userId, ...entry } = req.body;
+  if (!userId) {
+    return res.status(400).json({ error: "Missing userId in body" });
   }
-  entries.push(entry);
+
+  const newEntry = { userId, ...entry };
+  entries.push(newEntry);
   res.status(201).json({ success: true });
 });
 
+// DELETE (optionnel)
 app.delete("/entries/:id", (req, res) => {
-  const id = req.params.id;
-  const index = entries.findIndex(e => e.id === id);
-  if (index === -1) {
-    return res.status(404).json({ error: "Not found" });
+  const index = entries.findIndex(e => e.id === req.params.id);
+  if (index !== -1) {
+    entries.splice(index, 1);
+    res.json({ success: true });
+  } else {
+    res.status(404).json({ error: "Entry not found" });
   }
-  entries.splice(index, 1);
-  res.json({ success: true });
-});
-
-app.get("/", (req, res) => {
-  res.send("✅ K-Flow API is running.");
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ API running on http://localhost:${PORT}`);
+  console.log(`✅ API running at http://localhost:${PORT}`);
 });
