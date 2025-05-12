@@ -64,7 +64,8 @@ app.use("/", express.static("/root/kflow-backend/public"));
 
 
 // ✅ Start
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Fly.io API live on port ${PORT}`);
 });
+
 
