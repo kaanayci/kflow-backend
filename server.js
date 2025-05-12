@@ -4,6 +4,12 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*"); // ou spécifie ton extension ID
+  res.header("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
 const PORT = process.env.PORT || 3000;
 
 // ✅ CORS : accepte toutes les extensions / origines dynamiques
