@@ -6,16 +6,26 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "chrome-extension://hochjoliclncpdbbabaebkkflhkpgcdj");
+  const origin = req.headers.origin;
+
+  // 🔓 Autoriser uniquement les extensions navigateur
+  if (
+    origin &&
+    (origin.startsWith("chrome-extension://") || origin.startsWith("moz-extension://") || origin.startsWith("edge-extension://"))
+  ) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") {
-    return res.sendStatus(200); // pour gérer les preflight CORS
+    return res.sendStatus(200);
   }
 
   next();
 });
+
 
 
 
