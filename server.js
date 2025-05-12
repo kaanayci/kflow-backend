@@ -9,12 +9,12 @@ const PORT = process.env.PORT || 3000;
 // ✅ Middleware CORS dynamique 100% compatible extensions
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-
-  if (origin && (
-    origin.startsWith("chrome-extension://") ||
-    origin.startsWith("moz-extension://") ||
-    origin.startsWith("edge-extension://")
-  )) {
+  if (
+    origin &&
+    (origin.startsWith("chrome-extension://") ||
+     origin.startsWith("moz-extension://") ||
+     origin.startsWith("edge-extension://"))
+  ) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
 
@@ -27,6 +27,14 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.options("/entries", (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.sendStatus(200);
+});
+
 
 
 // ✅ JSON body parser après CORS
