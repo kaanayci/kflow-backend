@@ -1,25 +1,22 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); // ou spécifie ton extension ID
-  res.header("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
 const PORT = process.env.PORT || 3000;
 
-// ✅ CORS : accepte toutes les extensions / origines dynamiques
-app.use(cors({
-  origin: (origin, callback) => {
-    callback(null, true); // 🔓 autorise toutes les origines dynamiquement, y compris chrome-extension://...
-  },
-  methods: ["GET", "POST", "DELETE"],
-  allowedHeaders: ["Content-Type"],
-}));
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200); // pour gérer les preflight CORS
+  }
+
+  next();
+});
+
 
 
 // ✅ JSON avec gros fichiers (images)
