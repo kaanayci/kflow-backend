@@ -28,14 +28,21 @@ app.use((req, res, next) => {
   next();
 });
 
+// ✅ Route explicite OPTIONS si Railway ignore le middleware
 app.options("/entries", (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+  const origin = req.headers.origin;
+  if (
+    origin &&
+    (origin.startsWith("chrome-extension://") ||
+     origin.startsWith("moz-extension://") ||
+     origin.startsWith("edge-extension://"))
+  ) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   res.sendStatus(200);
 });
-
-
 
 // ✅ JSON body parser après CORS
 app.use(express.json({ limit: "50mb" }));
