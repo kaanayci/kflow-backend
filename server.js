@@ -10,13 +10,11 @@ const PORT = process.env.PORT || 3000;
 app.use((req, res, next) => {
   const origin = req.headers.origin;
 
-  // Autorise uniquement les extensions navigateur (Chrome, Edge, Firefox)
-  if (
-    origin &&
-    (origin.startsWith("chrome-extension://") ||
-     origin.startsWith("moz-extension://") ||
-     origin.startsWith("edge-extension://"))
-  ) {
+  if (origin && (
+    origin.startsWith("chrome-extension://") ||
+    origin.startsWith("moz-extension://") ||
+    origin.startsWith("edge-extension://")
+  )) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
 
@@ -29,6 +27,7 @@ app.use((req, res, next) => {
 
   next();
 });
+
 
 // ✅ JSON body parser après CORS
 app.use(express.json({ limit: "50mb" }));
