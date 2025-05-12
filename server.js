@@ -8,10 +8,11 @@ const PORT = process.env.PORT || 3000;
 
 // ✅ CORS : accepte toutes les extensions / origines dynamiques
 app.use(cors({
-  origin: true, // autorise dynamiquement toute origine, même extension
-  credentials: false,
+  origin: (origin, callback) => {
+    callback(null, true); // 🔓 autorise toutes les origines dynamiquement, y compris chrome-extension://...
+  },
   methods: ["GET", "POST", "DELETE"],
-  allowedHeaders: ["Content-Type"]
+  allowedHeaders: ["Content-Type"],
 }));
 
 
