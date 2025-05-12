@@ -8,10 +8,12 @@ const PORT = process.env.PORT || 3000;
 
 // ✅ CORS : accepte toutes les extensions / origines dynamiques
 app.use(cors({
-  origin: (_, callback) => callback(null, true),
+  origin: true, // autorise dynamiquement toute origine, même extension
+  credentials: false,
   methods: ["GET", "POST", "DELETE"],
   allowedHeaders: ["Content-Type"]
 }));
+
 
 // ✅ JSON avec gros fichiers (images)
 app.use(express.json({ limit: "50mb" }));
