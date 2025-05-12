@@ -1,58 +1,30 @@
-// ✅ server.js compatible extensions navigateur (Chrome, Edge, Firefox)
+// ✅ server.js pour Fly.io : 100% compatible extension, CORS, Docker et MongoDB
 const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
-// ✅ Middleware CORS dynamique 100% compatible extensions
+// ✅ Middleware CORS universel compatible extensions
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (
-    origin &&
-    (origin.startsWith("chrome-extension://") ||
-     origin.startsWith("moz-extension://") ||
-     origin.startsWith("edge-extension://"))
-  ) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-
+  const origin = req.headers.origin || "*";
+  res.setHeader("Access-Control-Allow-Origin", origin);
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
+  if (req.method === "OPTIONS") return res.sendStatus(200);
   next();
 });
 
-// ✅ Route explicite OPTIONS si Railway ignore le middleware
-app.options("/entries", (req, res) => {
-  const origin = req.headers.origin;
-  if (
-    origin &&
-    (origin.startsWith("chrome-extension://") ||
-     origin.startsWith("moz-extension://") ||
-     origin.startsWith("edge-extension://"))
-  ) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.sendStatus(200);
-});
-
-// ✅ JSON body parser après CORS
+// ✅ JSON body parser (supporte les fichiers encodés en tableau)
 app.use(express.json({ limit: "50mb" }));
 
-// ✅ Connexion à MongoDB Atlas
+// ✅ Connexion MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Connected to MongoDB Atlas"))
-  .catch(err => console.error("❌ MongoDB connection error:", err));
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => console.error("❌ MongoDB Error:", err));
 
-// ✅ Schéma avec support fichiers (Mixed) et userId
+// ✅ Schéma d’entrée
 const entrySchema = new mongoose.Schema({
   id: String,
   type: String,
@@ -64,10 +36,9 @@ const entrySchema = new mongoose.Schema({
   date: String,
   userId: String
 });
-
 const Entry = mongoose.model("Entry", entrySchema);
 
-// ✅ Routes
+// ✅ Routes API
 app.get("/entries", async (req, res) => {
   const { userId } = req.query;
   if (!userId) return res.status(400).json({ error: "Missing userId" });
@@ -87,7 +58,11 @@ app.delete("/entries/:id", async (req, res) => {
   res.json({ success: true });
 });
 
+const path = require("path");
+app.use("/", express.static(path.join(__dirname, "public")));
+
 // ✅ Start
 app.listen(PORT, () => {
-  console.log(`🚀 API running at http://localhost:${PORT}`);
+  console.log(`🚀 Fly.io API live on port ${PORT}`);
 });
+

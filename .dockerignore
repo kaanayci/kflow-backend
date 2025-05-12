@@ -1,0 +1,27 @@
+# Node.js
+node_modules
+npm-debug.log
+
+# Environnement
+.env
+.env.local
+.env.*.local
+
+# Systèmes
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Render
+render.yaml
+
+# Backup ou archives
+*.zip
+*.tar.gz
+
+# Autres outils
+.vscode
+.idea
