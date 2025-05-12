@@ -59,7 +59,9 @@ app.delete("/entries/:id", async (req, res) => {
 });
 
 const path = require("path");
-app.use("/", express.static(path.join(__dirname, "public")));
+app.use("/", express.static("/root/kflow-backend/public"));
+
+
 
 // ✅ Start
 app.listen(PORT, () => {
