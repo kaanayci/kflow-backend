@@ -5,14 +5,11 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ✅ CORS manuel avant tout
 app.use((req, res, next) => {
   const origin = req.headers.origin;
 
-  // 🔓 Autoriser uniquement les extensions navigateur
-  if (
-    origin &&
-    (origin.startsWith("chrome-extension://") || origin.startsWith("moz-extension://") || origin.startsWith("edge-extension://"))
-  ) {
+  if (origin && (origin.startsWith("chrome-extension://") || origin.startsWith("moz-extension://") || origin.startsWith("edge-extension://"))) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
 
@@ -26,10 +23,7 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
-
-// ✅ JSON avec gros fichiers (images)
+// ✅ JSON parser (doit venir après CORS !)
 app.use(express.json({ limit: "50mb" }));
 
 // ✅ MongoDB
@@ -37,7 +31,7 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Connected to MongoDB Atlas"))
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
-// ✅ Schéma Mongoose avec content mixte + userId
+// ✅ Mongoose schema
 const entrySchema = new mongoose.Schema({
   id: String,
   type: String,
